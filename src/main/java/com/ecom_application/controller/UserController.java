@@ -2,7 +2,6 @@ package com.ecom_application.controller;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ecom_application.model.User;
+import com.ecom_application.dto.UserRequest;
+import com.ecom_application.dto.UserResponse;
 import com.ecom_application.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -26,35 +26,28 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping()
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
         return ResponseEntity.ok(userService.fetchAllUsers());
-        // return new ResponseEntity<>(userService.fetchAllUsers(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-        public ResponseEntity<User> getUserById(@PathVariable Long id) {
-            // User user = userService.fetchUserById(id);
-            // if (user == null) {
-            //     return ResponseEntity.notFound().build();
-            // }
-            // return ResponseEntity.ok(user);
-
-            return userService.fetchUserById(id).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
+            return userService.fetchUserById(id)
+            .map(ResponseEntity::ok)
+            .orElseGet(() -> ResponseEntity.notFound().build());
         }
 
     @PostMapping()
-    public ResponseEntity<String> creatUsers(@RequestBody User user) {
-        userService.addUser(user);
+    public ResponseEntity<String> creatUsers(@RequestBody UserRequest userRequest) {
+        userService.addUser(userRequest);
         return ResponseEntity.ok("User added successfully");
-        // return new ResponseEntity<>("User added successfully", HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateUserById(@PathVariable Long id, @RequestBody User updatedUser) {
-        boolean updated = userService.updatedUser(id, updatedUser);
+    public ResponseEntity<String> updateUserById(@PathVariable Long id, @RequestBody UserRequest updatUserRequest) {
+        boolean updated = userService.updatedUser(id, updatUserRequest);
         if (updated) {
             return ResponseEntity.ok("User updated successfully");
-            // return new ResponseEntity<>("User added successfully", HttpStatus.CREATED);
         }
         return ResponseEntity.notFound().build();
     }
@@ -63,9 +56,7 @@ public class UserController {
     public ResponseEntity<String> deleteUserById(@PathVariable Long id) {
         boolean deleted = userService.deleteUser(id);
         if (deleted) {
-            return ResponseEntity.ok("User deleted successfully");
-            // Alternative standard REST response (HTTP 204 No Content):
-            // return ResponseEntity.noContent().build();
+            return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
     }
