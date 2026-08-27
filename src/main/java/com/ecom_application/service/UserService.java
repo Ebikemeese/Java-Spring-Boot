@@ -7,38 +7,45 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.ecom_application.model.User;
+import com.ecom_application.repository.UserRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
-    private List<User> userList = new ArrayList<>();
-    private Long nextId = 1L;
+    private final UserRepository userRepository;
+    // private List<User> userList = new ArrayList<>();
+    // private Long nextId = 1L;
+
 
     public List<User> fetchAllUsers() {
-        return userList;
+        return userRepository.findAll();
     }
 
     public Optional<User> fetchUserById(Long id) {
-        return userList.stream().filter(user -> user.getId().equals(id)).findFirst();
+        return userRepository.findById(id);
     }
 
-    public List<User> addUser(User user) {
-        user.setId(nextId++);
-        userList.add(user);
-        return userList;
+    public void addUser(User user) {
+        userRepository.save(user);
     }
 
     public boolean updatedUser(Long id, User updatedUser) {
-        return userList.stream()
-        .filter(user -> user.getId().equals(id))
-        .findFirst()
+        return userRepository.findById(id)
         .map(existingUser -> {
             existingUser.setFirstName(updatedUser.getFirstName());
             existingUser.setLastName(updatedUser.getLastName());
+            userRepository.save(existingUser);
             return true;
         }).orElse(false);
     }
 
     public boolean deleteUser(Long id) {
-        return userList.removeIf(user -> user.getId().equals(id));
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }
