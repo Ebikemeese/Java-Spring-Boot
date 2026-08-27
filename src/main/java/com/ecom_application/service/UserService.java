@@ -26,4 +26,19 @@ public class UserService {
         userList.add(user);
         return userList;
     }
+
+    public boolean updatedUser(Long id, User updatedUser) {
+        return userList.stream()
+        .filter(user -> user.getId().equals(id))
+        .findFirst()
+        .map(existingUser -> {
+            existingUser.setFirstName(updatedUser.getFirstName());
+            existingUser.setLastName(updatedUser.getLastName());
+            return true;
+        }).orElse(false);
+    }
+
+    public boolean deleteUser(Long id) {
+        return userList.removeIf(user -> user.getId().equals(id));
+    }
 }
