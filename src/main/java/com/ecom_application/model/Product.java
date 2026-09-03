@@ -13,7 +13,7 @@ import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity(name = "products_table")
+@Entity(name = "products")
 @Data
 @NoArgsConstructor
 public class Product {
