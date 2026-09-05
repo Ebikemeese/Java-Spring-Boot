@@ -16,7 +16,7 @@ import lombok.Data;
 
 @Entity
 @Data
-public class CardItem {
+public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
